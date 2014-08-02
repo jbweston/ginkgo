@@ -15,6 +15,7 @@ case is to create async applications, but there are cases when you need a
 """
 import functools
 import runpy
+from gevent.hub import LoopExit
 
 from .util import AbstractStateMachine
 from .util import defaultproperty
@@ -37,7 +38,7 @@ def autospawn(func):
     """ Decorator that will spawn the call in a local greenlet """
     @functools.wraps(func)
     def wrapped(self, *args, **kwargs):
-        self.spawn(func, self, *args, **kwargs)
+        return self.spawn(func, self, *args, **kwargs)
     return wrapped
 
 class ServiceStateMachine(AbstractStateMachine):
@@ -192,7 +193,11 @@ class BasicService(object):
             # already started, just move on
             pass
 
-        self.state.wait("stopped")
+        try:
+            self.state.wait("stopped")
+        except LoopExit:
+            pass
+
 
     def __enter__(self):
         self.start()
