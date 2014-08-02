@@ -14,7 +14,7 @@ import sys
 
 import ginkgo
 
-DEFAULT_FORMAT = "%(asctime)s %(levelname) 7s %(module)s: %(message)s"
+DEFAULT_FORMAT = "%(asctime)s %(levelname) 7s %(name)s: %(message)s"
 
 class Logger(object):
     logfile = ginkgo.Setting("logfile", default=None, help="""
